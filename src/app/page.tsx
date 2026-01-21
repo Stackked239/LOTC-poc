@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { StatsCards, TodayStats } from '@/components/dashboard/StatsCards'
+import { EnhancedStatsCards as StatsCards, TodayStats } from '@/components/dashboard/EnhancedStatsCards'
 import { InventoryTable } from '@/components/dashboard/InventoryTable'
-import { ReorderAlerts } from '@/components/dashboard/ReorderAlerts'
-import { ActivityFeed } from '@/components/dashboard/ActivityFeed'
+import { EnhancedReorderAlerts as ReorderAlerts } from '@/components/dashboard/EnhancedReorderAlerts'
+import { EnhancedActivityFeed as ActivityFeed } from '@/components/dashboard/EnhancedActivityFeed'
 import { PackagePlus, ClipboardList, RefreshCcw } from 'lucide-react'
 import {
   getInventoryLevels,
@@ -17,6 +17,7 @@ import {
   getRecentTransactions,
   getTodayStats,
 } from '@/lib/supabase/inventory'
+import { getPendingSubmissionsCount } from '@/lib/supabase/submissions'
 import { InventoryLevelWithCategory, InventoryTransactionWithCategory } from '@/types/database'
 
 export default function DashboardPage() {
@@ -30,6 +31,7 @@ export default function DashboardPage() {
     outOfStock: 0,
   })
   const [todayStats, setTodayStats] = useState({ itemsIntake: 0, itemsPicked: 0 })
+  const [pendingRequests, setPendingRequests] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,13 +40,14 @@ export default function DashboardPage() {
       setLoading(true)
       setError(null)
 
-      const [levelsData, statsData, alertsData, transactionsData, todayData] =
+      const [levelsData, statsData, alertsData, transactionsData, todayData, pendingCount] =
         await Promise.all([
           getInventoryLevels(),
           getInventoryStats(),
           getReorderAlerts(),
           getRecentTransactions(10),
           getTodayStats(),
+          getPendingSubmissionsCount(),
         ])
 
       setLevels(levelsData)
@@ -52,6 +55,7 @@ export default function DashboardPage() {
       setAlerts(alertsData)
       setTransactions(transactionsData)
       setTodayStats(todayData)
+      setPendingRequests(pendingCount)
     } catch (err) {
       console.error('Error fetching dashboard data:', err)
       setError('Failed to load dashboard data. Please check your Supabase connection.')
@@ -122,8 +126,8 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       {loading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          {[...Array(5)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-4 bg-muted rounded w-24" />
@@ -140,6 +144,7 @@ export default function DashboardPage() {
           totalValue={stats.totalValue}
           belowReorder={stats.belowReorder}
           outOfStock={stats.outOfStock}
+          pendingRequests={pendingRequests}
           itemsIntakeToday={todayStats.itemsIntake}
           itemsPickedToday={todayStats.itemsPicked}
         />

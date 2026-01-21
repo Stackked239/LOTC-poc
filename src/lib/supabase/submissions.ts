@@ -43,6 +43,25 @@ export async function getAllSubmissions(): Promise<any[]> {
 }
 
 /**
+ * Get count of pending submissions (not yet processed)
+ */
+export async function getPendingSubmissionsCount(): Promise<number> {
+  const supabase = createClient()
+
+  const { count, error } = await supabase
+    .from('submissions')
+    .select('*', { count: 'exact', head: true })
+    .or('sync_status.is.null,sync_status.neq.processed')
+
+  if (error) {
+    console.error('Error counting pending submissions:', error)
+    return 0
+  }
+
+  return count || 0
+}
+
+/**
  * Get a single submission by ID
  */
 export async function getSubmissionById(id: string): Promise<Submission | null> {
@@ -137,6 +156,31 @@ export async function createSubmission(data: SubmissionInsert): Promise<Submissi
   }
 
   return submission as Submission
+}
+
+/**
+ * Update submission with edited data
+ */
+export async function updateSubmission(
+  id: string,
+  updates: Partial<SubmissionUpdate>
+): Promise<void> {
+  const untypedSupabase = createUntypedClient()
+
+  const updateData: any = {
+    ...updates,
+    updated_at: new Date().toISOString(),
+  }
+
+  const { error } = await untypedSupabase
+    .from('submissions')
+    .update(updateData)
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error updating submission:', error)
+    throw error
+  }
 }
 
 /**
