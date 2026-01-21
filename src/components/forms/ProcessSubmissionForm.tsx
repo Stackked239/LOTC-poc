@@ -65,7 +65,7 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
   const [notes, setNotes] = useState('')
   const [recipientName, setRecipientName] = useState(`${caregiverFirstName} ${caregiverLastName}`)
   const [recipientPhone, setRecipientPhone] = useState(caregiverPhone)
-  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [deliveryAddress, setDeliveryAddress] = useState(caregiverAddress) // Auto-fill from submission
   const [deliveryNotes, setDeliveryNotes] = useState('')
 
   const [childAge, setChildAge] = useState<number>(0)
@@ -275,9 +275,9 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
         {/* Information to Gather from Caregiver */}
         <Card>
           <CardHeader>
-            <CardTitle>Caregiver Information (Call to Collect)</CardTitle>
+            <CardTitle>Additional Information from Caregiver Call</CardTitle>
             <CardDescription>
-              Get this information by calling the caregiver
+              Recipient details auto-filled from submission - verify/update during caregiver call
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
@@ -319,6 +319,9 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
                 onChange={(e) => setRecipientName(e.target.value)}
                 placeholder="Person picking up the bag"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Auto-filled from submission
+              </p>
             </div>
 
             <div>
@@ -329,16 +332,35 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
                 onChange={(e) => setRecipientPhone(e.target.value)}
                 placeholder="Contact number"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Auto-filled from submission
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="recipientEmail">Recipient Email</Label>
+              <Input
+                id="recipientEmail"
+                value={caregiverEmail}
+                disabled
+                placeholder="No email provided"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                From submission (read-only)
+              </p>
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="deliveryAddress">Delivery Address (if applicable)</Label>
+              <Label htmlFor="deliveryAddress">Delivery Address (if needed)</Label>
               <Input
                 id="deliveryAddress"
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
                 placeholder="Street address, city, state, zip"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Auto-filled from caregiver address (edit if delivery location is different)
+              </p>
             </div>
 
             <div className="md:col-span-2">
