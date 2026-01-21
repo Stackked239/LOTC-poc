@@ -379,63 +379,123 @@ export interface Database {
       submissions: {
         Row: {
           id: string
-          child_first_name: string
-          child_last_name: string
-          birthday: string
-          child_gender: string
-          ethnicity: string | null
-          pickup_location: string
-          clothing_needs: string | null
-          toy_preferences: string | null
-          special_notes: string | null
-          caregiver_name: string | null
-          caregiver_phone: string | null
+          submission_id: string
+          created_at: string | null
+          updated_at: string | null
+          neon_caregiver_id: string | null
+          neon_social_worker_id: string | null
+          request_type: string
+          relationship: string
+          caregiver_first_name: string
+          caregiver_last_name: string
           caregiver_email: string | null
-          status: SubmissionStatus
-          processed_by: string | null
-          processed_at: string | null
-          bag_of_hope_id: string | null
-          created_at: string
+          caregiver_phone: string | null
+          alternative_phone: string | null
+          caregiver_street: string
+          caregiver_city: string
+          caregiver_state: string
+          caregiver_zip: string
+          caregiver_county: string
+          social_worker_first_name: string
+          social_worker_last_name: string
+          social_worker_email: string
+          social_worker_phone: string | null
+          alternative_social_worker_phone: string | null
+          social_worker_county: string
+          child_first_name: string
+          child_last_initial: string
+          child_age: string
+          child_dob: string
+          child_gender: string
+          child_ethnicity: string
+          child_placement_type: string
+          pickup_location: string
+          completion_contact: string
+          is_licensed_foster: string
+          sync_status: string | null
+          last_synced_at: string | null
+          sync_error: string | null
+          neon_service_id: string | null
         }
         Insert: {
           id?: string
-          child_first_name: string
-          child_last_name: string
-          birthday: string
-          child_gender: string
-          ethnicity?: string | null
-          pickup_location: string
-          clothing_needs?: string | null
-          toy_preferences?: string | null
-          special_notes?: string | null
-          caregiver_name?: string | null
-          caregiver_phone?: string | null
+          submission_id: string
+          created_at?: string | null
+          updated_at?: string | null
+          neon_caregiver_id?: string | null
+          neon_social_worker_id?: string | null
+          request_type: string
+          relationship: string
+          caregiver_first_name: string
+          caregiver_last_name: string
           caregiver_email?: string | null
-          status?: SubmissionStatus
-          processed_by?: string | null
-          processed_at?: string | null
-          bag_of_hope_id?: string | null
-          created_at?: string
+          caregiver_phone?: string | null
+          alternative_phone?: string | null
+          caregiver_street: string
+          caregiver_city: string
+          caregiver_state: string
+          caregiver_zip: string
+          caregiver_county: string
+          social_worker_first_name: string
+          social_worker_last_name: string
+          social_worker_email: string
+          social_worker_phone?: string | null
+          alternative_social_worker_phone?: string | null
+          social_worker_county: string
+          child_first_name: string
+          child_last_initial: string
+          child_age: string
+          child_dob: string
+          child_gender: string
+          child_ethnicity: string
+          child_placement_type: string
+          pickup_location: string
+          completion_contact: string
+          is_licensed_foster: string
+          sync_status?: string | null
+          last_synced_at?: string | null
+          sync_error?: string | null
+          neon_service_id?: string | null
         }
         Update: {
           id?: string
-          child_first_name?: string
-          child_last_name?: string
-          birthday?: string
-          child_gender?: string
-          ethnicity?: string | null
-          pickup_location?: string
-          clothing_needs?: string | null
-          toy_preferences?: string | null
-          special_notes?: string | null
-          caregiver_name?: string | null
-          caregiver_phone?: string | null
+          submission_id?: string
+          created_at?: string | null
+          updated_at?: string | null
+          neon_caregiver_id?: string | null
+          neon_social_worker_id?: string | null
+          request_type?: string
+          relationship?: string
+          caregiver_first_name?: string
+          caregiver_last_name?: string
           caregiver_email?: string | null
-          status?: SubmissionStatus
-          processed_by?: string | null
-          processed_at?: string | null
-          bag_of_hope_id?: string | null
-          created_at?: string
+          caregiver_phone?: string | null
+          alternative_phone?: string | null
+          caregiver_street?: string
+          caregiver_city?: string
+          caregiver_state?: string
+          caregiver_zip?: string
+          caregiver_county?: string
+          social_worker_first_name?: string
+          social_worker_last_name?: string
+          social_worker_email?: string
+          social_worker_phone?: string | null
+          alternative_social_worker_phone?: string | null
+          social_worker_county?: string
+          child_first_name?: string
+          child_last_initial?: string
+          child_age?: string
+          child_dob?: string
+          child_gender?: string
+          child_ethnicity?: string
+          child_placement_type?: string
+          pickup_location?: string
+          completion_contact?: string
+          is_licensed_foster?: string
+          sync_status?: string | null
+          last_synced_at?: string | null
+          sync_error?: string | null
+          neon_service_id?: string | null
         }
       }
       journal_entries: {

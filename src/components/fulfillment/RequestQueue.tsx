@@ -80,76 +80,62 @@ export function RequestQueue({ onProcessSubmission }: RequestQueueProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {submissions.map((submission) => {
-          // Handle different possible field names
-          const firstName = submission.child_first_name || submission.first_name || submission.name || 'Unknown'
-          const lastName = submission.child_last_name || submission.last_name || ''
-          const birthday = submission.birthday || submission.date_of_birth || submission.dob
-          const age = birthday ? calculateAge(birthday) : null
-          const gender = submission.child_gender || submission.gender || 'unknown'
-          const pickupLocation = submission.pickup_location || submission.location || 'Not specified'
-          const phone = submission.caregiver_phone || submission.phone || submission.contact_phone
-          const notes = submission.special_notes || submission.notes
-
           return (
             <Card key={submission.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center justify-between">
                   <span className="truncate">
-                    {firstName} {lastName}
+                    {submission.child_first_name} {submission.child_last_initial}.
                   </span>
-                  {age && (
-                    <Badge variant="secondary" className="ml-2">
-                      {age} yr{age !== 1 ? 's' : ''}
-                    </Badge>
-                  )}
+                  <Badge variant="secondary" className="ml-2">
+                    {submission.child_age}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {/* Birthday */}
-                {birthday && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-muted-foreground">
-                      {new Date(birthday).toLocaleDateString()}
-                    </span>
-                  </div>
-                )}
+                {/* Date of Birth */}
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-muted-foreground">
+                    {new Date(submission.child_dob).toLocaleDateString()}
+                  </span>
+                </div>
 
                 {/* Gender */}
-                {gender && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <UserPlus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-muted-foreground capitalize">
-                      {gender}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-sm">
+                  <UserPlus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-muted-foreground capitalize">
+                    {submission.child_gender}
+                  </span>
+                </div>
 
                 {/* Pickup Location */}
-                {pickupLocation && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-muted-foreground capitalize truncate">
-                      {pickupLocation.replace(/_/g, ' ')}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-sm">
+                  <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-muted-foreground capitalize truncate">
+                    {submission.pickup_location.replace(/_/g, ' ')}
+                  </span>
+                </div>
 
-                {/* Caregiver Contact */}
-                {phone && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-muted-foreground truncate">
-                      {phone}
-                    </span>
-                  </div>
-                )}
+                {/* Caregiver Info */}
+                <div className="pt-2 border-t">
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Caregiver</p>
+                  <p className="text-sm">
+                    {submission.caregiver_first_name} {submission.caregiver_last_name}
+                  </p>
+                  {submission.caregiver_phone && (
+                    <div className="flex items-center gap-2 text-sm mt-1">
+                      <Phone className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-muted-foreground">{submission.caregiver_phone}</span>
+                    </div>
+                  )}
+                </div>
 
-                {/* Special Notes Preview */}
-                {notes && (
+                {/* Placement Type */}
+                {submission.child_placement_type && (
                   <div className="pt-2 border-t">
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {notes}
+                    <p className="text-xs text-muted-foreground">
+                      Placement: <span className="capitalize">{submission.child_placement_type.replace(/_/g, ' ')}</span>
                     </p>
                   </div>
                 )}
@@ -163,11 +149,9 @@ export function RequestQueue({ onProcessSubmission }: RequestQueueProps) {
                   </div>
                 )}
 
-                {/* Debug info - remove after testing */}
-                <div className="pt-2 border-t">
-                  <p className="text-xs text-muted-foreground">
-                    Status: {submission.status || 'unknown'}
-                  </p>
+                {/* Submission ID for reference */}
+                <div className="text-xs text-muted-foreground font-mono">
+                  #{submission.submission_id}
                 </div>
 
                 {/* Process Button */}

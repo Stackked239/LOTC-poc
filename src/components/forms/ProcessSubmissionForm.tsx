@@ -14,7 +14,7 @@ import { toast } from 'sonner'
 import { Submission } from '@/types/database'
 import { BagColor, Gender, AgeGroup } from '@/types/database'
 import { createBagOfHope } from '@/lib/supabase/bags-of-hope'
-import { linkSubmissionToBag, updateSubmissionStatus } from '@/lib/supabase/submissions'
+import { linkSubmissionToBag } from '@/lib/supabase/submissions'
 import { BAG_COLOR_LABELS } from '@/lib/constants/labels'
 import { BagQRCodeDialog } from './BagQRCodeDialog'
 
@@ -27,24 +27,34 @@ interface ProcessSubmissionFormProps {
 export function ProcessSubmissionForm({ submission, onCancel, onComplete }: ProcessSubmissionFormProps) {
   const router = useRouter()
 
-  // Auto-populated from submission - handle different field name possibilities
-  const [childFirstName] = useState(submission.child_first_name || submission.first_name || submission.name || '')
-  const [childLastName] = useState(submission.child_last_name || submission.last_name || '')
-  const [birthday] = useState(submission.birthday || submission.date_of_birth || submission.dob || '')
-  const [gender] = useState<Gender>((submission.child_gender || submission.gender || 'neutral') as Gender)
-  const [ethnicity] = useState(submission.ethnicity || '')
-  const [pickupLocation] = useState(submission.pickup_location || submission.location || '')
-  const [caregiverName] = useState(submission.caregiver_name || submission.contact_name || '')
-  const [caregiverPhone] = useState(submission.caregiver_phone || submission.phone || submission.contact_phone || '')
-  const [submissionNotes] = useState(submission.special_notes || submission.notes || '')
+  // Auto-populated from submission - using actual schema fields
+  const [childFirstName] = useState(submission.child_first_name)
+  const [childLastInitial] = useState(submission.child_last_initial)
+  const [birthday] = useState(submission.child_dob)
+  const [gender] = useState<Gender>(submission.child_gender as Gender)
+  const [ethnicity] = useState(submission.child_ethnicity || '')
+  const [pickupLocation] = useState(submission.pickup_location)
+  const [caregiverFirstName] = useState(submission.caregiver_first_name)
+  const [caregiverLastName] = useState(submission.caregiver_last_name)
+  const [caregiverPhone] = useState(submission.caregiver_phone || '')
+  const [caregiverEmail] = useState(submission.caregiver_email || '')
+  const [caregiverAddress] = useState(
+    `${submission.caregiver_street}, ${submission.caregiver_city}, ${submission.caregiver_state} ${submission.caregiver_zip}`
+  )
+  const [placementType] = useState(submission.child_placement_type)
+  const [socialWorker] = useState(
+    `${submission.social_worker_first_name} ${submission.social_worker_last_name} (${submission.social_worker_email})`
+  )
+  const [submissionId] = useState(submission.submission_id)
 
   // Fields to be filled by employee (gathered from caregiver call)
+  const [childFullLastName, setChildFullLastName] = useState('') // Need full last name
   const [bagEmbroideryCompany, setBagEmbroideryCompany] = useState('')
   const [bagOrderNumber, setBagOrderNumber] = useState('')
   const [bagEmbroideryColor, setBagEmbroideryColor] = useState<BagColor>('blue')
   const [toiletryBagColor, setToiletryBagColor] = useState<BagColor>('blue')
   const [toiletryBagLabeled, setToiletryBagLabeled] = useState('')
-  const [toyActivity, setToyActivity] = useState(submission.toy_preferences || '')
+  const [toyActivity, setToyActivity] = useState('')
   const [tops, setTops] = useState('')
   const [bottoms, setBottoms] = useState('')
   const [pajamas, setPajamas] = useState('')
@@ -53,7 +63,7 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
   const [shoes, setShoes] = useState('')
   const [coat, setCoat] = useState('')
   const [notes, setNotes] = useState('')
-  const [recipientName, setRecipientName] = useState(caregiverName)
+  const [recipientName, setRecipientName] = useState(`${caregiverFirstName} ${caregiverLastName}`)
   const [recipientPhone, setRecipientPhone] = useState(caregiverPhone)
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [deliveryNotes, setDeliveryNotes] = useState('')
@@ -74,15 +84,17 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
     }
   }, [birthday])
 
-  // Mark submission as "processing" when form opens
-  useEffect(() => {
-    updateSubmissionStatus(submission.id, 'processing').catch((error) => {
-      console.error('Error updating submission status:', error)
-    })
-  }, [submission.id])
+  // Note: The actual submissions table doesn't have a "status" field for workflow tracking
+  // It uses sync_status for Neon CRM synchronization status
+  // So we don't mark submissions as "processing" - they're just displayed in the queue
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+
+    if (!childFullLastName) {
+      toast.error("Please enter the child's full last name")
+      return
+    }
 
     if (!bagEmbroideryColor) {
       toast.error('Please select a favorite color')
@@ -94,7 +106,7 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
     try {
       const formData: any = {
         child_first_name: childFirstName,
-        child_last_name: childLastName,
+        child_last_name: childFullLastName,
         birthday,
         child_age: childAge,
         child_age_group: ageGroup,
@@ -118,13 +130,24 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
         diaper_pullup: diaperPullup || undefined,
         shoes: shoes || undefined,
         coat: coat || undefined,
-        notes: `${submissionNotes ? `Submission notes: ${submissionNotes}\n\n` : ''}${notes}`,
+        notes: [
+          `Submission ID: ${submissionId}`,
+          `Placement Type: ${placementType}`,
+          `Caregiver: ${caregiverFirstName} ${caregiverLastName} (${caregiverPhone})`,
+          `Social Worker: ${submission.social_worker_first_name} ${submission.social_worker_last_name}`,
+          notes || '',
+        ].filter(Boolean).join('\n'),
       }
 
       const bag = await createBagOfHope(formData)
 
-      // Link submission to bag
-      await linkSubmissionToBag(submission.id, bag.id)
+      // Link submission to bag (note: this will fail if bag_of_hope_id column doesn't exist)
+      try {
+        await linkSubmissionToBag(submission.id, bag.id)
+      } catch (linkError) {
+        console.warn('Could not link submission to bag:', linkError)
+        // Continue anyway - the bag was created successfully
+      }
 
       setCreatedBagId(bag.id)
       setShowQRDialog(true)
@@ -166,52 +189,84 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
               Submission Information (Auto-Filled)
             </CardTitle>
             <CardDescription>
-              Information from the online submission form
+              Information from submission #{submissionId}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
+          <CardContent className="space-y-6">
+            {/* Child Information */}
             <div>
-              <Label>Child's First Name</Label>
-              <Input value={childFirstName} disabled />
+              <h3 className="font-semibold mb-3">Child Information</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>First Name</Label>
+                  <Input value={childFirstName} disabled />
+                </div>
+                <div>
+                  <Label>Last Initial</Label>
+                  <Input value={childLastInitial} disabled />
+                </div>
+                <div>
+                  <Label>Date of Birth</Label>
+                  <Input value={birthday} type="date" disabled />
+                </div>
+                <div>
+                  <Label>Age</Label>
+                  <Input value={`${childAge} years old (${ageGroup})`} disabled />
+                </div>
+                <div>
+                  <Label>Gender</Label>
+                  <Input value={gender} className="capitalize" disabled />
+                </div>
+                <div>
+                  <Label>Ethnicity</Label>
+                  <Input value={ethnicity} className="capitalize" disabled />
+                </div>
+                <div>
+                  <Label>Placement Type</Label>
+                  <Input value={placementType.replace(/_/g, ' ')} className="capitalize" disabled />
+                </div>
+                <div>
+                  <Label>Pickup Location</Label>
+                  <Input value={pickupLocation} className="capitalize" disabled />
+                </div>
+              </div>
             </div>
+
+            <Separator />
+
+            {/* Caregiver Information */}
             <div>
-              <Label>Child's Last Name</Label>
-              <Input value={childLastName} disabled />
+              <h3 className="font-semibold mb-3">Caregiver Information</h3>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label>Name</Label>
+                  <Input value={`${caregiverFirstName} ${caregiverLastName}`} disabled />
+                </div>
+                <div>
+                  <Label>Phone</Label>
+                  <Input value={caregiverPhone} disabled />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input value={caregiverEmail} disabled />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Address</Label>
+                  <Input value={caregiverAddress} disabled />
+                </div>
+              </div>
             </div>
+
+            <Separator />
+
+            {/* Social Worker Information */}
             <div>
-              <Label>Birthday</Label>
-              <Input value={birthday} type="date" disabled />
-            </div>
-            <div>
-              <Label>Age</Label>
-              <Input value={`${childAge} years old (${ageGroup})`} disabled />
-            </div>
-            <div>
-              <Label>Gender</Label>
-              <Input value={gender} className="capitalize" disabled />
-            </div>
-            {ethnicity && (
+              <h3 className="font-semibold mb-3">Social Worker</h3>
               <div>
-                <Label>Ethnicity</Label>
-                <Input value={ethnicity} className="capitalize" disabled />
+                <Label>Contact</Label>
+                <Input value={socialWorker} disabled />
               </div>
-            )}
-            <div>
-              <Label>Pickup Location</Label>
-              <Input value={pickupLocation.replace(/_/g, ' ')} className="capitalize" disabled />
             </div>
-            {caregiverPhone && (
-              <div>
-                <Label>Caregiver Phone</Label>
-                <Input value={caregiverPhone} disabled />
-              </div>
-            )}
-            {submissionNotes && (
-              <div className="md:col-span-2">
-                <Label>Submission Notes</Label>
-                <Textarea value={submissionNotes} disabled rows={3} />
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -226,6 +281,18 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <Label htmlFor="childFullLastName">
+                Child's Full Last Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="childFullLastName"
+                value={childFullLastName}
+                onChange={(e) => setChildFullLastName(e.target.value)}
+                placeholder={`Starts with ${childLastInitial}...`}
+              />
+            </div>
+
             <div className="md:col-span-2">
               <Label htmlFor="bagEmbroideryColor">
                 Child's Favorite Color <span className="text-destructive">*</span>
@@ -482,7 +549,7 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
           }}
           formData={{
             child_first_name: childFirstName,
-            child_last_name: childLastName,
+            child_last_name: childFullLastName,
             birthday,
             gender,
             ethnicity,

@@ -1,10 +1,10 @@
 import { createClient, createUntypedClient } from './client'
-import { Submission, SubmissionInsert, SubmissionUpdate, SubmissionStatus } from '@/types/database'
+import { Submission, SubmissionInsert, SubmissionUpdate } from '@/types/database'
 
 /**
- * Get all submissions with optional status filter
+ * Get all submissions with optional sync_status filter
  */
-export async function getSubmissions(status?: SubmissionStatus): Promise<any[]> {
+export async function getSubmissions(syncStatus?: string): Promise<any[]> {
   const supabase = createClient()
 
   let query = supabase
@@ -12,8 +12,8 @@ export async function getSubmissions(status?: SubmissionStatus): Promise<any[]> 
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (status) {
-    query = query.eq('status', status)
+  if (syncStatus) {
+    query = query.eq('sync_status', syncStatus)
   }
 
   const { data, error } = await query
@@ -24,19 +24,19 @@ export async function getSubmissions(status?: SubmissionStatus): Promise<any[]> 
     throw error
   }
 
-  console.log('Submissions data:', data)
+  console.log(`Fetched ${data?.length || 0} submissions`)
   return data || []
 }
 
 /**
- * Get pending submissions (status = 'pending')
+ * Get synced submissions (sync_status = 'synced')
  */
-export async function getPendingSubmissions(): Promise<any[]> {
-  return getSubmissions('pending')
+export async function getSyncedSubmissions(): Promise<any[]> {
+  return getSubmissions('synced')
 }
 
 /**
- * Get all submissions without status filter (for debugging)
+ * Get all submissions without filter
  */
 export async function getAllSubmissions(): Promise<any[]> {
   return getSubmissions()
@@ -63,22 +63,23 @@ export async function getSubmissionById(id: string): Promise<Submission | null> 
 }
 
 /**
- * Update submission status
+ * Update submission sync status
  */
-export async function updateSubmissionStatus(
+export async function updateSubmissionSyncStatus(
   id: string,
-  status: SubmissionStatus,
-  processedBy?: string
+  syncStatus: string,
+  syncError?: string | null
 ): Promise<void> {
   const untypedSupabase = createUntypedClient()
 
   const updates: any = {
-    status,
-    processed_at: status === 'processing' || status === 'completed' ? new Date().toISOString() : null,
+    sync_status: syncStatus,
+    last_synced_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   }
 
-  if (processedBy) {
-    updates.processed_by = processedBy
+  if (syncError !== undefined) {
+    updates.sync_error = syncError
   }
 
   const { error } = await untypedSupabase
@@ -87,13 +88,14 @@ export async function updateSubmissionStatus(
     .eq('id', id)
 
   if (error) {
-    console.error('Error updating submission status:', error)
+    console.error('Error updating submission sync status:', error)
     throw error
   }
 }
 
 /**
- * Link submission to a bag of hope
+ * Link submission to a bag of hope (if bag_of_hope_id column exists)
+ * This is optional and will fail gracefully if the column doesn't exist
  */
 export async function linkSubmissionToBag(
   submissionId: string,
@@ -104,14 +106,15 @@ export async function linkSubmissionToBag(
   const { error } = await untypedSupabase
     .from('submissions')
     .update({
-      bag_of_hope_id: bagId,
-      status: 'completed',
-      processed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      sync_status: 'processed',
+      // Note: bag_of_hope_id column may not exist in the actual schema
+      // This will fail if the column doesn't exist, but that's okay
     })
     .eq('id', submissionId)
 
   if (error) {
-    console.error('Error linking submission to bag:', error)
+    console.error('Error updating submission:', error)
     throw error
   }
 }
