@@ -156,13 +156,13 @@ export function EnhancedStatsCards({
 
         if ((stat as any).quickAction) {
           return (
-            <Link key={stat.title} href={(stat as any).quickAction.href} className="h-full flex">
+            <Link key={stat.title} href={(stat as any).quickAction.href} className="block">
               {cardContent}
             </Link>
           )
         }
 
-        return <div className="h-full flex">{cardContent}</div>
+        return cardContent
       })}
     </div>
   )
