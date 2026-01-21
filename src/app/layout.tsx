@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Poppins, JetBrains_Mono } from "next/font/google"
+import { Poppins, JetBrains_Mono, Bebas_Neue } from "next/font/google"
 import "./globals.css"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Toaster } from "@/components/ui/sonner"
@@ -7,7 +7,13 @@ import { Toaster } from "@/components/ui/sonner"
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+})
+
+const bebasNeue = Bebas_Neue({
+  variable: "--font-headline",
+  subsets: ["latin"],
+  weight: ["400"],
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${poppins.variable} ${bebasNeue.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <AppLayout>{children}</AppLayout>
         <Toaster position="top-right" richColors />

@@ -17,6 +17,7 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { LOTC_LOGO_BASE64 } from '@/lib/constants/logo'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -42,16 +43,16 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              'group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              'group flex items-center px-3 py-3 text-sm font-semibold rounded-lg transition-all duration-200',
               isActive
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-secondary hover:text-secondary-foreground'
+                ? 'bg-lotc-red text-white shadow-lotc'
+                : 'text-lotc-black/80 hover:bg-white/70 hover:text-lotc-red'
             )}
           >
             <item.icon
               className={cn(
                 'mr-3 h-5 w-5 flex-shrink-0 transition-colors',
-                isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-secondary-foreground'
+                isActive ? 'text-white' : 'text-lotc-grey group-hover:text-lotc-red'
               )}
               aria-hidden="true"
             />
@@ -65,19 +66,19 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-lotc-blue-light">
       {/* Logo */}
-      <div className="flex h-20 items-center gap-3 px-4 border-b border-border/50">
+      <div className="flex h-20 items-center gap-3 px-4 border-b border-white/40 bg-white/50">
         <Image
-          src="/lotc-logo.svg"
+          src={LOTC_LOGO_BASE64}
           alt="LOTC Logo"
           width={48}
           height={48}
           className="flex-shrink-0"
         />
         <div className="flex flex-col">
-          <span className="font-bold text-lg leading-tight tracking-tight">LOTC</span>
-          <span className="text-xs text-muted-foreground leading-tight">Inventory System</span>
+          <span className="font-bold text-lg leading-tight tracking-tight text-lotc-black">LOTC</span>
+          <span className="text-xs text-lotc-grey leading-tight">Inventory System</span>
         </div>
       </div>
 
@@ -85,8 +86,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       <NavLinks onNavigate={onNavigate} />
 
       {/* Footer */}
-      <div className="border-t border-border/50 p-4 bg-muted/30">
-        <p className="text-xs text-muted-foreground text-center font-medium">
+      <div className="border-t border-white/40 p-4 bg-white/30">
+        <p className="text-xs text-lotc-black/70 text-center font-medium">
           Least of These Carolinas
         </p>
       </div>
@@ -96,8 +97,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 export function Sidebar() {
   return (
-    <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r bg-card">
+    <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col shadow-lotc-lg">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto">
         <SidebarContent />
       </div>
     </div>

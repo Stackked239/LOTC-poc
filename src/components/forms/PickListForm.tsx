@@ -28,7 +28,7 @@ import {
   Condition,
 } from '@/types/database'
 import { PickItem } from '@/types/forms'
-import { getBagOfHopeById, completePick } from '@/lib/supabase/bags-of-hope'
+import { getBagOfHopeById } from '@/lib/supabase/bags-of-hope'
 import {
   getCategories,
   getCategoriesForChild,
@@ -42,6 +42,7 @@ import {
   formatGender,
   getStockStatusColor,
 } from '@/lib/utils/formatters'
+import { completePickAction } from '@/app/actions/pick-actions'
 
 interface PickItemState extends PickItem {
   categoryName: string
@@ -171,7 +172,7 @@ export function PickListForm() {
     setSubmitting(true)
 
     try {
-      await completePick(
+      const result = await completePickAction(
         bag.id,
         picksToSubmit.map((p) => ({
           category_id: p.category_id,
@@ -180,8 +181,15 @@ export function PickListForm() {
         }))
       )
 
-      toast.success('Bag of Hope packed successfully!')
-      router.push('/')
+      if (result.success) {
+        toast.success('Bag of Hope packed successfully!')
+        // Small delay to let the toast render before navigation
+        setTimeout(() => {
+          router.push('/pick')
+        }, 500)
+      } else {
+        toast.error(result.error || 'Failed to complete pick')
+      }
     } catch (error) {
       console.error('Error completing pick:', error)
       toast.error('Failed to complete pick')

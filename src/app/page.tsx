@@ -97,14 +97,14 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-headline text-lotc-red tracking-wide">Dashboard</h1>
+          <p className="text-lotc-grey font-medium mt-1">
             Inventory overview and quick actions
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button asChild>
             <Link href="/intake">
               <PackagePlus className="h-4 w-4 mr-2" />

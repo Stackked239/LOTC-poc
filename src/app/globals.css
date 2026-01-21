@@ -51,47 +51,54 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.985 0.002 230);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* LOTC Brand Red - Primary #BE1E2D */
-  --primary: oklch(0.47 0.18 25);
-  --primary-foreground: oklch(1 0 0);
-  /* LOTC Brand Blue - Secondary #8FB8D4 */
-  --secondary: oklch(0.76 0.055 230);
-  --secondary-foreground: oklch(0.15 0 0);
-  --muted: oklch(0.96 0.005 230);
-  --muted-foreground: oklch(0.45 0 0);
-  /* LOTC Brand Blue lighter - Accent */
-  --accent: oklch(0.92 0.025 230);
-  --accent-foreground: oklch(0.15 0 0);
-  --destructive: oklch(0.55 0.22 27);
-  --border: oklch(0.90 0.01 230);
-  --input: oklch(0.90 0.01 230);
-  --ring: oklch(0.47 0.18 25);
+  --radius: 0.5rem;
+  /* LOTC Brand Colors - Exact from Guidelines */
+  /* Main Red: #c22035 */
+  --background: #ffffff;
+  --foreground: #060511;
+  --card: #ffffff;
+  --card-foreground: #060511;
+  --popover: #ffffff;
+  --popover-foreground: #060511;
+  /* LOTC Brand Red - Primary #c22035 */
+  --primary: #c22035;
+  --primary-foreground: #ffffff;
+  /* LOTC Brand Blue - Secondary #86b2d3 */
+  --secondary: #86b2d3;
+  --secondary-foreground: #060511;
+  /* Light blue backgrounds */
+  --muted: #f0f5f8;
+  --muted-foreground: #060511;
+  --accent: #e8f1f7;
+  --accent-foreground: #060511;
+  /* Destructive stays red */
+  --destructive: #c22035;
+  --destructive-foreground: #ffffff;
+  /* Borders and inputs */
+  --border: #d6dfe6;
+  --input: #e8f1f7;
+  --ring: #c22035;
   /* Chart colors using brand palette */
-  --chart-1: oklch(0.47 0.18 25);
-  --chart-2: oklch(0.76 0.055 230);
-  --chart-3: oklch(0.58 0.14 25);
-  --chart-4: oklch(0.82 0.04 230);
-  --chart-5: oklch(0.35 0.12 25);
-  /* Sidebar with brand red */
-  --sidebar: oklch(0.47 0.18 25);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(1 0 0);
-  --sidebar-primary-foreground: oklch(0.47 0.18 25);
-  --sidebar-accent: oklch(0.42 0.16 25);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.42 0.16 25);
-  --sidebar-ring: oklch(1 0 0);
+  --chart-1: #c22035;
+  --chart-2: #86b2d3;
+  --chart-3: #a7a8a3;
+  --chart-4: #d49ba5;
+  --chart-5: #5a92b8;
+  /* Sidebar stays white with subtle blue background */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #060511;
+  --sidebar-primary: #c22035;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8fafb;
+  --sidebar-accent-foreground: #060511;
+  --sidebar-border: #e8f1f7;
+  --sidebar-ring: #c22035;
   /* LOTC Brand specific colors for direct use */
-  --lotc-red: oklch(0.47 0.18 25);
-  --lotc-blue: oklch(0.76 0.055 230);
-  --lotc-blue-light: oklch(0.92 0.025 230);
+  --lotc-red: #c22035;
+  --lotc-blue: #86b2d3;
+  --lotc-blue-light: #e8f1f7;
+  --lotc-grey: #a7a8a3;
+  --lotc-black: #060511;
 }
 
 .dark {
@@ -144,3 +151,66 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* LOTC Brand Typography Classes */
+.font-headline {
+  font-family: var(--font-headline), var(--font-poppins), sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+/* Brand-specific utility classes */
+.bg-lotc-blue {
+  background-color: #86b2d3;
+}
+
+.bg-lotc-blue-light {
+  background-color: #e8f1f7;
+}
+
+.bg-lotc-red {
+  background-color: #c22035;
+}
+
+.text-lotc-red {
+  color: #c22035;
+}
+
+.text-lotc-blue {
+  color: #86b2d3;
+}
+
+.border-lotc-red {
+  border-color: #c22035;
+}
+
+.border-lotc-blue {
+  border-color: #86b2d3;
+}
+
+/* Brand-inspired animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Soft shadows for depth */
+.shadow-lotc {
+  box-shadow: 0 2px 8px rgba(194, 32, 53, 0.08);
+}
+
+.shadow-lotc-lg {
+  box-shadow: 0 8px 24px rgba(194, 32, 53, 0.12);
+}
+
