@@ -65,6 +65,7 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
   const [notes, setNotes] = useState('')
   const [recipientName, setRecipientName] = useState(`${caregiverFirstName} ${caregiverLastName}`)
   const [recipientPhone, setRecipientPhone] = useState(caregiverPhone)
+  const [recipientEmail, setRecipientEmail] = useState(caregiverEmail) // Auto-fill and allow editing
   const [deliveryAddress, setDeliveryAddress] = useState(caregiverAddress) // Auto-fill from submission
   const [deliveryNotes, setDeliveryNotes] = useState('')
 
@@ -341,12 +342,13 @@ export function ProcessSubmissionForm({ submission, onCancel, onComplete }: Proc
               <Label htmlFor="recipientEmail">Recipient Email</Label>
               <Input
                 id="recipientEmail"
-                value={caregiverEmail}
-                disabled
-                placeholder="No email provided"
+                type="email"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                placeholder="Email address"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                From submission (read-only)
+                Auto-filled from submission
               </p>
             </div>
 
