@@ -1,0 +1,93 @@
+-- Insert sample submissions for testing the queue
+-- These can be deleted after testing
+
+INSERT INTO public.submissions (
+    child_first_name,
+    child_last_name,
+    birthday,
+    child_gender,
+    ethnicity,
+    pickup_location,
+    clothing_needs,
+    toy_preferences,
+    special_notes,
+    caregiver_name,
+    caregiver_phone,
+    caregiver_email,
+    status
+) VALUES
+(
+    'Emma',
+    'Johnson',
+    '2020-03-15',
+    'girl',
+    'white',
+    'main_office',
+    'Size 4T clothing needed',
+    'Loves dolls and coloring books',
+    'Please include extra warm clothing',
+    'Sarah Johnson',
+    '555-0101',
+    'sarah.j@email.com',
+    'pending'
+),
+(
+    'Michael',
+    'Smith',
+    '2018-07-22',
+    'boy',
+    'black_african_american',
+    'community_center',
+    'Size 6 shirts and pants',
+    'Enjoys cars and building blocks',
+    'Needs shoes size 12',
+    'Lisa Smith',
+    '555-0102',
+    'lisa.smith@email.com',
+    'pending'
+),
+(
+    'Sofia',
+    'Martinez',
+    '2021-11-08',
+    'girl',
+    'hispanic_latino',
+    'church',
+    'Size 2T needed',
+    'Stuffed animals preferred',
+    'Urgent - family just arrived',
+    'Maria Martinez',
+    '555-0103',
+    'maria.m@email.com',
+    'pending'
+),
+(
+    'Ethan',
+    'Davis',
+    '2017-05-14',
+    'boy',
+    'white',
+    'home_delivery',
+    'Size 8 clothing',
+    'Sports equipment, books',
+    'Lives in rural area, please deliver',
+    'Jennifer Davis',
+    '555-0104',
+    'jen.davis@email.com',
+    'pending'
+),
+(
+    'Olivia',
+    'Brown',
+    '2019-09-30',
+    'girl',
+    'asian',
+    'main_office',
+    'Size 5T dresses and pants',
+    'Art supplies, puzzles',
+    NULL,
+    'Amy Brown',
+    '555-0105',
+    'amy.brown@email.com',
+    'pending'
+);

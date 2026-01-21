@@ -27,16 +27,16 @@ interface ProcessSubmissionFormProps {
 export function ProcessSubmissionForm({ submission, onCancel, onComplete }: ProcessSubmissionFormProps) {
   const router = useRouter()
 
-  // Auto-populated from submission
-  const [childFirstName] = useState(submission.child_first_name)
-  const [childLastName] = useState(submission.child_last_name)
-  const [birthday] = useState(submission.birthday)
-  const [gender] = useState<Gender>(submission.child_gender as Gender)
+  // Auto-populated from submission - handle different field name possibilities
+  const [childFirstName] = useState(submission.child_first_name || submission.first_name || submission.name || '')
+  const [childLastName] = useState(submission.child_last_name || submission.last_name || '')
+  const [birthday] = useState(submission.birthday || submission.date_of_birth || submission.dob || '')
+  const [gender] = useState<Gender>((submission.child_gender || submission.gender || 'neutral') as Gender)
   const [ethnicity] = useState(submission.ethnicity || '')
-  const [pickupLocation] = useState(submission.pickup_location)
-  const [caregiverName] = useState(submission.caregiver_name || '')
-  const [caregiverPhone] = useState(submission.caregiver_phone || '')
-  const [submissionNotes] = useState(submission.special_notes || '')
+  const [pickupLocation] = useState(submission.pickup_location || submission.location || '')
+  const [caregiverName] = useState(submission.caregiver_name || submission.contact_name || '')
+  const [caregiverPhone] = useState(submission.caregiver_phone || submission.phone || submission.contact_phone || '')
+  const [submissionNotes] = useState(submission.special_notes || submission.notes || '')
 
   // Fields to be filled by employee (gathered from caregiver call)
   const [bagEmbroideryCompany, setBagEmbroideryCompany] = useState('')

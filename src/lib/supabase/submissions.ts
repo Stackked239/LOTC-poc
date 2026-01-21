@@ -4,7 +4,7 @@ import { Submission, SubmissionInsert, SubmissionUpdate, SubmissionStatus } from
 /**
  * Get all submissions with optional status filter
  */
-export async function getSubmissions(status?: SubmissionStatus): Promise<Submission[]> {
+export async function getSubmissions(status?: SubmissionStatus): Promise<any[]> {
   const supabase = createClient()
 
   let query = supabase
@@ -20,17 +20,26 @@ export async function getSubmissions(status?: SubmissionStatus): Promise<Submiss
 
   if (error) {
     console.error('Error fetching submissions:', error)
+    console.error('Error details:', JSON.stringify(error, null, 2))
     throw error
   }
 
+  console.log('Submissions data:', data)
   return data || []
 }
 
 /**
  * Get pending submissions (status = 'pending')
  */
-export async function getPendingSubmissions(): Promise<Submission[]> {
+export async function getPendingSubmissions(): Promise<any[]> {
   return getSubmissions('pending')
+}
+
+/**
+ * Get all submissions without status filter (for debugging)
+ */
+export async function getAllSubmissions(): Promise<any[]> {
+  return getSubmissions()
 }
 
 /**

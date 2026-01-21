@@ -6,15 +6,15 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Inbox, Phone, UserPlus, Calendar, MapPin } from 'lucide-react'
 import { Submission } from '@/types/database'
-import { getPendingSubmissions } from '@/lib/supabase/submissions'
+import { getAllSubmissions } from '@/lib/supabase/submissions'
 import { toast } from 'sonner'
 
 interface RequestQueueProps {
-  onProcessSubmission: (submission: Submission) => void
+  onProcessSubmission: (submission: any) => void
 }
 
 export function RequestQueue({ onProcessSubmission }: RequestQueueProps) {
-  const [submissions, setSubmissions] = useState<Submission[]>([])
+  const [submissions, setSubmissions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -23,7 +23,9 @@ export function RequestQueue({ onProcessSubmission }: RequestQueueProps) {
 
   async function loadSubmissions() {
     try {
-      const data = await getPendingSubmissions()
+      console.log('Loading submissions...')
+      const data = await getAllSubmissions()
+      console.log('Submissions loaded:', data)
       setSubmissions(data)
     } catch (error) {
       console.error('Error loading submissions:', error)
@@ -78,68 +80,93 @@ export function RequestQueue({ onProcessSubmission }: RequestQueueProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {submissions.map((submission) => {
-          const age = calculateAge(submission.birthday)
+          // Handle different possible field names
+          const firstName = submission.child_first_name || submission.first_name || submission.name || 'Unknown'
+          const lastName = submission.child_last_name || submission.last_name || ''
+          const birthday = submission.birthday || submission.date_of_birth || submission.dob
+          const age = birthday ? calculateAge(birthday) : null
+          const gender = submission.child_gender || submission.gender || 'unknown'
+          const pickupLocation = submission.pickup_location || submission.location || 'Not specified'
+          const phone = submission.caregiver_phone || submission.phone || submission.contact_phone
+          const notes = submission.special_notes || submission.notes
 
           return (
             <Card key={submission.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center justify-between">
                   <span className="truncate">
-                    {submission.child_first_name} {submission.child_last_name}
+                    {firstName} {lastName}
                   </span>
-                  <Badge variant="secondary" className="ml-2">
-                    {age} yr{age !== 1 ? 's' : ''}
-                  </Badge>
+                  {age && (
+                    <Badge variant="secondary" className="ml-2">
+                      {age} yr{age !== 1 ? 's' : ''}
+                    </Badge>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Birthday */}
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-muted-foreground">
-                    {new Date(submission.birthday).toLocaleDateString()}
-                  </span>
-                </div>
+                {birthday && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      {new Date(birthday).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
 
                 {/* Gender */}
-                <div className="flex items-center gap-2 text-sm">
-                  <UserPlus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-muted-foreground capitalize">
-                    {submission.child_gender}
-                  </span>
-                </div>
+                {gender && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <UserPlus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-muted-foreground capitalize">
+                      {gender}
+                    </span>
+                  </div>
+                )}
 
                 {/* Pickup Location */}
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-muted-foreground capitalize truncate">
-                    {submission.pickup_location.replace(/_/g, ' ')}
-                  </span>
-                </div>
+                {pickupLocation && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-muted-foreground capitalize truncate">
+                      {pickupLocation.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                )}
 
                 {/* Caregiver Contact */}
-                {submission.caregiver_phone && (
+                {phone && (
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <span className="text-muted-foreground truncate">
-                      {submission.caregiver_phone}
+                      {phone}
                     </span>
                   </div>
                 )}
 
                 {/* Special Notes Preview */}
-                {submission.special_notes && (
+                {notes && (
                   <div className="pt-2 border-t">
                     <p className="text-xs text-muted-foreground line-clamp-2">
-                      {submission.special_notes}
+                      {notes}
                     </p>
                   </div>
                 )}
 
                 {/* Submitted Date */}
+                {submission.created_at && (
+                  <div className="pt-2 border-t">
+                    <p className="text-xs text-muted-foreground">
+                      Submitted {formatRelativeTime(submission.created_at)}
+                    </p>
+                  </div>
+                )}
+
+                {/* Debug info - remove after testing */}
                 <div className="pt-2 border-t">
                   <p className="text-xs text-muted-foreground">
-                    Submitted {formatRelativeTime(submission.created_at)}
+                    Status: {submission.status || 'unknown'}
                   </p>
                 </div>
 
