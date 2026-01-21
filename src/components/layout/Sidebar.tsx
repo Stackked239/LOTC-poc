@@ -12,7 +12,8 @@ import {
   FileSpreadsheet,
   Settings,
   Menu,
-  FileInput
+  FileInput,
+  Map
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Request', href: '/request', icon: FileInput },
   { name: 'Fulfillment', href: '/pick', icon: ClipboardList },
   { name: 'Inventory', href: '/inventory', icon: Package },
+  { name: 'Logistics Map', href: '/logistics', icon: Map },
   { name: 'Accounting', href: '/accounting', icon: FileSpreadsheet },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]

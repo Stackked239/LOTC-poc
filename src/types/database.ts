@@ -9,6 +9,9 @@ export type Json =
 export type AgeGroup = 'baby' | 'toddler' | 'school_age' | 'teen' | 'neutral'
 export type Gender = 'boy' | 'girl' | 'neutral'
 export type ItemType = 'tops' | 'bottoms' | 'sleepwear' | 'shoes' | 'toiletries' | 'toys' | 'books' | 'bedding' | 'undergarments' | 'socks'
+export type Ethnicity = 'hispanic_latino' | 'white' | 'black_african_american' | 'asian' | 'native_american' | 'pacific_islander' | 'other' | 'prefer_not_to_say'
+export type PickupLocation = 'main_office' | 'community_center' | 'church' | 'home_delivery' | 'other'
+export type BagColor = 'red' | 'blue' | 'green' | 'yellow' | 'pink' | 'purple' | 'orange' | 'black' | 'white' | 'multicolor'
 export type TransactionType = 'intake' | 'pick' | 'adjustment' | 'thrift_out' | 'disposal'
 export type SourceType = 'donation' | 'purchase' | 'transfer'
 export type Condition = 'new' | 'used'
@@ -51,6 +54,16 @@ export const BATCH_STATUS_LABELS: Record<BatchStatus, string> = {
   in_transit: 'In Transit',
   ready_for_pickup: 'Ready for Pickup',
   delivered: 'Delivered',
+  cancelled: 'Cancelled',
+}
+
+// Submission types
+export type SubmissionStatus = 'pending' | 'processing' | 'completed' | 'cancelled'
+
+export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {
+  pending: 'Pending',
+  processing: 'Processing',
+  completed: 'Completed',
   cancelled: 'Cancelled',
 }
 export type JournalEntryType = 'in_kind_donation' | 'purchase_expense' | 'inventory_out'
@@ -186,8 +199,37 @@ export interface Database {
         Row: {
           id: string
           request_id: string | null
+          // Child Information
+          child_first_name: string | null
+          child_last_name: string | null
+          birthday: string | null
+          child_age: number | null
           child_age_group: string
           child_gender: string
+          ethnicity: string | null
+          // Pickup/Delivery
+          pickup_location: string | null
+          recipient_name: string | null
+          recipient_phone: string | null
+          delivery_address: string | null
+          delivery_notes: string | null
+          // Bag Details
+          bag_embroidery_company: string | null
+          bag_order_number: string | null
+          bag_embroidery_color: string | null
+          toiletry_bag_color: string | null
+          toiletry_bag_labeled: string | null
+          // Non-Clothing Items
+          toy_activity: string | null
+          // Clothing Items
+          tops: string | null
+          bottoms: string | null
+          pajamas: string | null
+          underwear: string | null
+          diaper_pullup: string | null
+          shoes: string | null
+          coat: string | null
+          // Status and tracking
           status: BagStatus
           notes: string | null
           packed_by: string | null
@@ -197,18 +239,43 @@ export interface Database {
           delivered_at: string | null
           tracking_number: string | null
           shipping_carrier: string | null
-          recipient_name: string | null
-          recipient_phone: string | null
-          delivery_address: string | null
-          delivery_notes: string | null
           batch_id: string | null
           created_at: string
         }
         Insert: {
           id?: string
           request_id?: string | null
+          // Child Information
+          child_first_name?: string | null
+          child_last_name?: string | null
+          birthday?: string | null
+          child_age?: number | null
           child_age_group: string
           child_gender: string
+          ethnicity?: string | null
+          // Pickup/Delivery
+          pickup_location?: string | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          delivery_address?: string | null
+          delivery_notes?: string | null
+          // Bag Details
+          bag_embroidery_company?: string | null
+          bag_order_number?: string | null
+          bag_embroidery_color?: string | null
+          toiletry_bag_color?: string | null
+          toiletry_bag_labeled?: string | null
+          // Non-Clothing Items
+          toy_activity?: string | null
+          // Clothing Items
+          tops?: string | null
+          bottoms?: string | null
+          pajamas?: string | null
+          underwear?: string | null
+          diaper_pullup?: string | null
+          shoes?: string | null
+          coat?: string | null
+          // Status and tracking
           status?: BagStatus
           notes?: string | null
           packed_by?: string | null
@@ -218,18 +285,43 @@ export interface Database {
           delivered_at?: string | null
           tracking_number?: string | null
           shipping_carrier?: string | null
-          recipient_name?: string | null
-          recipient_phone?: string | null
-          delivery_address?: string | null
-          delivery_notes?: string | null
           batch_id?: string | null
           created_at?: string
         }
         Update: {
           id?: string
           request_id?: string | null
+          // Child Information
+          child_first_name?: string | null
+          child_last_name?: string | null
+          birthday?: string | null
+          child_age?: number | null
           child_age_group?: string
           child_gender?: string
+          ethnicity?: string | null
+          // Pickup/Delivery
+          pickup_location?: string | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          delivery_address?: string | null
+          delivery_notes?: string | null
+          // Bag Details
+          bag_embroidery_company?: string | null
+          bag_order_number?: string | null
+          bag_embroidery_color?: string | null
+          toiletry_bag_color?: string | null
+          toiletry_bag_labeled?: string | null
+          // Non-Clothing Items
+          toy_activity?: string | null
+          // Clothing Items
+          tops?: string | null
+          bottoms?: string | null
+          pajamas?: string | null
+          underwear?: string | null
+          diaper_pullup?: string | null
+          shoes?: string | null
+          coat?: string | null
+          // Status and tracking
           status?: BagStatus
           notes?: string | null
           packed_by?: string | null
@@ -239,10 +331,6 @@ export interface Database {
           delivered_at?: string | null
           tracking_number?: string | null
           shipping_carrier?: string | null
-          recipient_name?: string | null
-          recipient_phone?: string | null
-          delivery_address?: string | null
-          delivery_notes?: string | null
           batch_id?: string | null
           created_at?: string
         }
@@ -286,6 +374,68 @@ export interface Database {
           delivered_at?: string | null
           created_at?: string
           updated_at?: string
+        }
+      }
+      submissions: {
+        Row: {
+          id: string
+          child_first_name: string
+          child_last_name: string
+          birthday: string
+          child_gender: string
+          ethnicity: string | null
+          pickup_location: string
+          clothing_needs: string | null
+          toy_preferences: string | null
+          special_notes: string | null
+          caregiver_name: string | null
+          caregiver_phone: string | null
+          caregiver_email: string | null
+          status: SubmissionStatus
+          processed_by: string | null
+          processed_at: string | null
+          bag_of_hope_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          child_first_name: string
+          child_last_name: string
+          birthday: string
+          child_gender: string
+          ethnicity?: string | null
+          pickup_location: string
+          clothing_needs?: string | null
+          toy_preferences?: string | null
+          special_notes?: string | null
+          caregiver_name?: string | null
+          caregiver_phone?: string | null
+          caregiver_email?: string | null
+          status?: SubmissionStatus
+          processed_by?: string | null
+          processed_at?: string | null
+          bag_of_hope_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          child_first_name?: string
+          child_last_name?: string
+          birthday?: string
+          child_gender?: string
+          ethnicity?: string | null
+          pickup_location?: string
+          clothing_needs?: string | null
+          toy_preferences?: string | null
+          special_notes?: string | null
+          caregiver_name?: string | null
+          caregiver_phone?: string | null
+          caregiver_email?: string | null
+          status?: SubmissionStatus
+          processed_by?: string | null
+          processed_at?: string | null
+          bag_of_hope_id?: string | null
+          created_at?: string
         }
       }
       journal_entries: {
@@ -416,3 +566,7 @@ export type ShippingBatchUpdate = Database['public']['Tables']['shipping_batches
 export type ShippingBatchWithBags = ShippingBatch & {
   bags: BagOfHope[]
 }
+
+export type Submission = Database['public']['Tables']['submissions']['Row']
+export type SubmissionInsert = Database['public']['Tables']['submissions']['Insert']
+export type SubmissionUpdate = Database['public']['Tables']['submissions']['Update']

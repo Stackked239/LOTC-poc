@@ -20,6 +20,7 @@ import {
 import { BagOfHope, BagStatus, BAG_STATUS_LABELS } from '@/types/database'
 import { formatAgeGroup, formatGender } from '@/lib/utils/formatters'
 import { formatDistanceToNow } from 'date-fns'
+import { ShipBagDialog } from './ShipBagDialog'
 
 interface BagCardProps {
   bag: BagOfHope
@@ -108,13 +109,6 @@ export function BagCard({ bag, onStatusChange, showActions = true }: BagCardProp
                 Created {timeAgo}
               </p>
 
-              {/* Shipping info if available */}
-              {bag.tracking_number && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Tracking: {bag.tracking_number}
-                </p>
-              )}
-
               {bag.recipient_name && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                   <span>{bag.recipient_name}</span>
@@ -150,15 +144,28 @@ export function BagCard({ bag, onStatusChange, showActions = true }: BagCardProp
                 </Button>
               )}
 
-              {action && bag.status !== 'pending' && bag.status !== 'picking' && (
-                <Button
-                  size="sm"
-                  onClick={handleAction}
-                  disabled={loading}
-                >
-                  <Check className="h-4 w-4 mr-1" />
-                  {loading ? 'Updating...' : action.label}
-                </Button>
+              {bag.status === 'ready_to_ship' ? (
+                <ShipBagDialog
+                  bagId={bag.id}
+                  onSuccess={() => onStatusChange?.(bag.id, 'in_transit')}
+                  trigger={
+                    <Button size="sm">
+                      <Check className="h-4 w-4 mr-1" />
+                      Mark In Transit
+                    </Button>
+                  }
+                />
+              ) : (
+                action && bag.status !== 'pending' && bag.status !== 'picking' && (
+                  <Button
+                    size="sm"
+                    onClick={handleAction}
+                    disabled={loading}
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    {loading ? 'Updating...' : action.label}
+                  </Button>
+                )
               )}
 
               <Button asChild variant="ghost" size="icon">

@@ -63,7 +63,7 @@ export async function getLogisticsLocations(): Promise<LogisticsLocation[]> {
   if (batchesError) {
     console.error('Error fetching batches:', batchesError)
   } else if (batches) {
-    for (const batch of batches) {
+    for (const batch of batches as unknown as ShippingBatch[]) {
       // Get a representative bag from this batch to get location
       const { data: batchBags } = await supabase
         .from('bags_of_hope')
@@ -76,7 +76,7 @@ export async function getLogisticsLocations(): Promise<LogisticsLocation[]> {
       locations.push({
         id: batch.id,
         type: 'batch',
-        address: batchBags?.delivery_address || null,
+        address: (batchBags as any)?.delivery_address || null,
         status: batch.status,
         recipient_name: null,
         tracking_number: batch.tracking_number,

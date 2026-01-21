@@ -71,8 +71,33 @@ export async function createBagOfHope(
   const supabase = createUntypedClient()
 
   const bag = {
+    // Child Information
+    child_first_name: formData.child_first_name,
+    child_last_name: formData.child_last_name,
+    birthday: formData.birthday,
+    child_age: formData.child_age || null,
     child_age_group: formData.child_age_group,
     child_gender: formData.child_gender,
+    ethnicity: formData.ethnicity || null,
+    // Pickup/Delivery
+    pickup_location: formData.pickup_location,
+    // Bag Details
+    bag_embroidery_company: formData.bag_embroidery_company || null,
+    bag_order_number: formData.bag_order_number || null,
+    bag_embroidery_color: formData.bag_embroidery_color || null,
+    toiletry_bag_color: formData.toiletry_bag_color || null,
+    toiletry_bag_labeled: formData.toiletry_bag_labeled || null,
+    // Non-Clothing Items
+    toy_activity: formData.toy_activity || null,
+    // Clothing Items
+    tops: formData.tops || null,
+    bottoms: formData.bottoms || null,
+    pajamas: formData.pajamas || null,
+    underwear: formData.underwear || null,
+    diaper_pullup: formData.diaper_pullup || null,
+    shoes: formData.shoes || null,
+    coat: formData.coat || null,
+    // Additional
     request_id: formData.request_id || null,
     notes: formData.notes || null,
     status: 'pending',

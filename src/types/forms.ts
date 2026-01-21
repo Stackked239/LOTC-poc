@@ -1,4 +1,4 @@
-import { Condition, SourceType, AgeGroup, Gender } from './database'
+import { Condition, SourceType, AgeGroup, Gender, Ethnicity, PickupLocation, BagColor } from './database'
 
 export interface IntakeFormData {
   category_id: string
@@ -21,8 +21,33 @@ export interface PickListFormData {
 }
 
 export interface CreateBagOfHopeData {
+  // Child Information
+  child_first_name: string
+  child_last_name: string
+  birthday: string
+  child_age?: number
   child_age_group: AgeGroup
   child_gender: Gender
+  ethnicity?: Ethnicity
+  // Pickup/Delivery
+  pickup_location: PickupLocation
+  // Bag Details
+  bag_embroidery_company?: string
+  bag_order_number?: string
+  bag_embroidery_color?: BagColor
+  toiletry_bag_color?: BagColor
+  toiletry_bag_labeled?: string
+  // Non-Clothing Items
+  toy_activity?: string
+  // Clothing Items
+  tops?: string
+  bottoms?: string
+  pajamas?: string
+  underwear?: string
+  diaper_pullup?: string
+  shoes?: string
+  coat?: string
+  // Additional
   request_id?: string
   notes?: string
 }

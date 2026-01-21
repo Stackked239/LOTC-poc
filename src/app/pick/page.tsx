@@ -5,16 +5,16 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { FulfillmentTabs } from '@/components/fulfillment/FulfillmentTabs'
-import { PickListForm } from '@/components/forms/PickListForm'
+import { PickListChecklist } from '@/components/fulfillment/PickListChecklist'
 import { ArrowLeft, Plus } from 'lucide-react'
 
 function FulfillmentContent() {
   const searchParams = useSearchParams()
   const bagId = searchParams.get('bag')
 
-  // If a bag ID is provided, show the pick list form
+  // If a bag ID is provided, show the simplified pick list checklist
   if (bagId) {
-    return <PickListForm />
+    return <PickListChecklist />
   }
 
   // Otherwise show the fulfillment tabs

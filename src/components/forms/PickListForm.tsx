@@ -259,26 +259,196 @@ export function PickListForm() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-primary" fill="currentColor" />
-              Bag of Hope
+              Bag of Hope - Request Details
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Age Group</p>
-                <p className="font-medium">{formatAgeGroup(bag.child_age_group)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Gender</p>
-                <p className="font-medium">{formatGender(bag.child_gender)}</p>
-              </div>
-              {bag.request_id && (
+          <CardContent className="space-y-4">
+            {/* Child Information */}
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Child Information</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {bag.child_first_name && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">First Name</p>
+                    <p className="font-medium">{bag.child_first_name}</p>
+                  </div>
+                )}
+                {bag.child_last_name && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Last Name</p>
+                    <p className="font-medium">{bag.child_last_name}</p>
+                  </div>
+                )}
+                {bag.birthday && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Birthday</p>
+                    <p className="font-medium">{new Date(bag.birthday).toLocaleDateString()}</p>
+                  </div>
+                )}
+                {bag.child_age !== null && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Age</p>
+                    <p className="font-medium">{bag.child_age} years</p>
+                  </div>
+                )}
                 <div>
-                  <p className="text-sm text-muted-foreground">Request ID</p>
-                  <p className="font-medium">{bag.request_id}</p>
+                  <p className="text-sm text-muted-foreground">Age Group</p>
+                  <p className="font-medium">{formatAgeGroup(bag.child_age_group)}</p>
                 </div>
-              )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Gender</p>
+                  <p className="font-medium">{formatGender(bag.child_gender)}</p>
+                </div>
+                {bag.ethnicity && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Ethnicity</p>
+                    <p className="font-medium capitalize">{bag.ethnicity.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
+              </div>
             </div>
+
+            <Separator />
+
+            {/* Pickup/Delivery */}
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Pickup & Delivery</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {bag.pickup_location && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pickup Location</p>
+                    <p className="font-medium capitalize">{bag.pickup_location.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
+                {bag.request_id && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Request ID</p>
+                    <p className="font-medium">{bag.request_id}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bag Details */}
+            {(bag.bag_embroidery_company || bag.bag_order_number || bag.bag_embroidery_color || bag.toiletry_bag_color || bag.toiletry_bag_labeled) && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">Bag Details</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {bag.bag_embroidery_company && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Embroidery Company</p>
+                        <p className="font-medium">{bag.bag_embroidery_company}</p>
+                      </div>
+                    )}
+                    {bag.bag_order_number && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Order Number</p>
+                        <p className="font-medium">{bag.bag_order_number}</p>
+                      </div>
+                    )}
+                    {bag.bag_embroidery_color && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Embroidery Color</p>
+                        <p className="font-medium capitalize">{bag.bag_embroidery_color}</p>
+                      </div>
+                    )}
+                    {bag.toiletry_bag_color && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Toiletry Bag Color</p>
+                        <p className="font-medium capitalize">{bag.toiletry_bag_color}</p>
+                      </div>
+                    )}
+                    {bag.toiletry_bag_labeled && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Toiletry Label</p>
+                        <p className="font-medium">{bag.toiletry_bag_labeled}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Non-Clothing Items */}
+            {bag.toy_activity && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">Non-Clothing Items</h4>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Toy/Activity</p>
+                    <p className="font-medium whitespace-pre-wrap">{bag.toy_activity}</p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Clothing Needs */}
+            {(bag.tops || bag.bottoms || bag.pajamas || bag.underwear || bag.diaper_pullup || bag.shoes || bag.coat) && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">Clothing Needs</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {bag.tops && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Tops</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.tops}</p>
+                      </div>
+                    )}
+                    {bag.bottoms && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Bottoms</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.bottoms}</p>
+                      </div>
+                    )}
+                    {bag.pajamas && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Pajamas</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.pajamas}</p>
+                      </div>
+                    )}
+                    {bag.underwear && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Underwear</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.underwear}</p>
+                      </div>
+                    )}
+                    {bag.diaper_pullup && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Diaper/Pullup</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.diaper_pullup}</p>
+                      </div>
+                    )}
+                    {bag.shoes && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Shoes</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.shoes}</p>
+                      </div>
+                    )}
+                    {bag.coat && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Coat</p>
+                        <p className="font-medium whitespace-pre-wrap text-sm">{bag.coat}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Notes */}
+            {bag.notes && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">Notes</h4>
+                  <p className="text-sm whitespace-pre-wrap">{bag.notes}</p>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
