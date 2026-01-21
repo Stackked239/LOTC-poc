@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#BE1E2D"/>
+  <circle cx="50" cy="50" r="48" fill="none" stroke="white" stroke-width="1"/>
+
+  <!-- Children silhouettes in a circle -->
+  <g fill="white">
+    <!-- Child figure 1 - standing with arms up -->
+    <path d="M35 62 L35 50 L32 45 L35 45 L35 38 L38 38 L38 45 L41 45 L38 50 L38 62 Z"/>
+    <circle cx="36.5" cy="34" r="4"/>
+
+    <!-- Child figure 2 - running -->
+    <path d="M50 62 L47 52 L43 55 L45 50 L50 42 L55 50 L57 55 L53 52 L50 62 Z"/>
+    <circle cx="50" cy="36" r="4"/>
+
+    <!-- Child figure 3 - arms out -->
+    <path d="M65 62 L65 50 L68 45 L65 45 L65 38 L62 38 L62 45 L59 45 L62 50 L62 62 Z"/>
+    <circle cx="63.5" cy="34" r="4"/>
+  </g>
+
+  <!-- Text around circle -->
+  <defs>
+    <path id="topArc" d="M 15,50 A 35,35 0 0,1 85,50"/>
+    <path id="bottomArc" d="M 85,50 A 35,35 0 0,1 15,50"/>
+  </defs>
+
+  <text font-family="Poppins, Arial, sans-serif" font-size="8" font-weight="bold" fill="white">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">LEAST OF THESE</textPath>
+  </text>
+  <text font-family="Poppins, Arial, sans-serif" font-size="8" font-weight="bold" fill="white">
+    <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">CAROLINAS</textPath>
+  </text>
+
+  <!-- Decorative dots -->
+  <circle cx="15" cy="50" r="2" fill="#BE1E2D" stroke="white" stroke-width="1"/>
+  <circle cx="85" cy="50" r="2" fill="#BE1E2D" stroke="white" stroke-width="1"/>
+</svg>
